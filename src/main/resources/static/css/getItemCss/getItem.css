@@ -1,0 +1,14 @@
+
+.placeCenter {
+    width: 300px;
+    height: 350px;
+    margin:  auto;
+    transform: translateY(20%);
+    position: relative; /*脱离文档流*/
+    /*background: grey;*/
+}
+.box__shadow {
+    border: 3px solid #fff0e8;
+    min-width: 230px;
+    padding: 10px 5px 10px 20px;
+}

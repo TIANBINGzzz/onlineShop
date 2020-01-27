@@ -1,0 +1,9 @@
+.setCenter {
+    /*position: center;*/
+    /*text-align: center;*/
+    /*transform: translateY(50%);*/
+    position: relative; /*脱离文档流*/
+    width: 50px;
+    height: 30px;
+    background: #2a6496;
+}

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" type="image/png" sizes="16x16" href="../../Back/plugins/images/favicon.png">
+    <title>自由买后台管理系统</title>
+    <!-- Bootstrap Core CSS -->
+    <link href="../../Back/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Menu CSS -->
+    <link href="../../Back/plugins/bower_components/sidebar-nav/dist/sidebar-nav.min.css" rel="stylesheet">
+    <!-- toast CSS -->
+    <link href="../../Back/plugins/bower_components/toast-master/css/jquery.toast.css" rel="stylesheet">
+    <!-- morris CSS -->
+    <link href="../../Back/plugins/bower_components/morrisjs/morris.css" rel="stylesheet">
+    <!-- animation CSS -->
+    <link href="../../css/Back/css/animate.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="../../css/Back/css/style.css" rel="stylesheet">
+    <!-- color CSS -->
+    <link href="../../css/Back/css/colors/blue-dark.css" id="theme" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Preloader -->
+    <div class="preloader">
+        <div class="cssload-speeding-wheel"></div>
+    </div>
+    <div id="wrapper">
+        <!-- Navigation -->
+        <<nav class="navbar navbar-default navbar-static-top m-b-0">
+        <div class="navbar-header"> <a class="navbar-toggle hidden-sm hidden-md hidden-lg " href="javascript:void(0)" data-toggle="collapse" data-target=".navbar-collapse"><i class="fa fa-bars"></i></a>
+
+            <ul class="nav navbar-top-links navbar-left m-l-20 hidden-xs">
+                <li>
+                    <form role="search" class="app-search hidden-xs">
+                        <input type="text" placeholder="Search..." class="form-control"> <a href=""><i class="fa fa-search"></i></a>
+                    </form>
+                </li>
+            </ul>
+            <ul class="nav navbar-top-links navbar-right pull-right">
+                <li>
+                    <a class="profile-pic" href="#"> <b class="hidden-xs">NJFU YS</b> </a>
+                </li>
+            </ul>
+        </div>
+
+    </nav>
+        <!-- Left navbar-header -->
+        <div class="navbar-default sidebar" role="navigation">
+            <div class="sidebar-nav navbar-collapse slimscrollsidebar">
+                <ul class="nav" id="side-menu">
+                    <li style="padding: 10px 0 0;">
+                        <a href="Main.html" class="waves-effect"><i class="fa fa-clock-o fa-fw" aria-hidden="true"></i><span class="hide-menu">主界面</span></a>
+                    </li>
+                    <li>
+                        <a href="createItem.html" class="waves-effect"><i class="fa fa-user fa-fw" aria-hidden="true"></i><span class="hide-menu">添加商品</span></a>
+                    </li>
+                    <li>
+                        <a href="deleteItem.html" class="waves-effect"><i class="fa fa-user fa-fw" aria-hidden="true"></i><span class="hide-menu">下架商品</span></a>
+                    </li>
+                    <li>
+                        <a href="userList.html" class="waves-effect"><i class="fa fa-table fa-fw" aria-hidden="true"></i><span class="hide-menu">用户列表</span></a>
+                    </li>
+                
+
+                </ul>
+   
+            </div>
+        </div>
+        <!-- Left navbar-header end -->
+        <!-- Page Content -->
+        <div id="page-wrapper">
+            <div class="container-fluid">
+                <div class="row bg-title">
+                    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+                        <h4 class="page-title">用户列表</h4> </div>
+                    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12"> <a href="userList.html" class="btn btn-danger pull-right m-l-20 btn-rounded btn-outline hidden-xs hidden-sm waves-effect waves-light">刷新列表</a>
+                        <ol class="breadcrumb">
+                            <li><a href="#">主界面</a></li>
+                            <li class="active">用户列表</li>
+                        </ol>
+                    </div>
+                    <!-- /.col-lg-12 -->
+                </div>
+                <!-- /row -->
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="white-box">
+                            <h3 class="box-title">用户</h3>
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>名字</th>
+                                            <th>性别</th>
+                                            <th>年龄</th>
+                                            <th>电话</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="insertContainer">
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.row -->
+            </div>
+            <!-- /.container-fluid -->
+        </div>
+        <!-- /#page-wrapper -->
+    </div>
+
+    <!-- /#wrapper -->
+    <!-- jQuery -->
+    <script src="../../Back/plugins/bower_components/jquery/dist/jquery.min.js"></script>
+    <!-- Bootstrap Core JavaScript -->
+    <script src="../../Back/bootstrap/dist/js/bootstrap.min.js"></script>
+    <!-- Menu Plugin JavaScript -->
+    <script src="../../Back/plugins/bower_components/sidebar-nav/dist/sidebar-nav.min.js"></script>
+    <!--slimscroll JavaScript -->
+    <script src="../../js/Back/js/jquery.slimscroll.js"></script>
+    <!--Wave Effects -->
+    <script src="../../js/Back/js/waves.js"></script>
+    <!-- Custom Theme JavaScript -->
+    <script src="../../js/Back/js/custom.min.js"></script>
+</body>
+<script>
+    // 定义全局商品数组信息
+    var g_userList = [];
+    $(document).ready(function() {
+        $.ajax({
+            type: "GET",
+            url: "http://localhost:8080/user/list",
+            xhrFields:{
+                withCredentials:true,
+            },
+            success: function(data) {
+                if (data.status == "success") {
+                    g_userList = data.data;
+                    reloadDom();
+                } else {
+                    alert("获取用户信息失败，原因为" + data.data.errMsg);
+                }
+            },
+            error: function(data) {
+                alert("获取用户信息失败，原因为" + data.responseText);
+            }
+        });
+    });
+        function reloadDom() {
+        for (var i = 0; i < g_userList.length; i++) {
+            var userDO =g_userList[i];
+            var dom =
+                "<tr data-id='"+userDO.id+"' id='userDetail"+userDO.id+"'>\
+            <td>"+userDO.id+"</td>\
+			<td>"+userDO.name+"</td>\
+			<td>"+userDO.gender+"</td>\
+			<td>"+userDO.age+"</td>\
+			<td>"+userDO.telphone+"</td>\
+			</tr>";
+            $("#insertContainer").append($(dom));
+        }
+    }
+</script>
+
+</html>

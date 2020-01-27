@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:text-align="http://www.w3.org/1999/xhtml">
+<head>
+	<meta charset="utf-8">
+
+<!--	<link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css">-->
+	<link rel="stylesheet" type="text/css" href="../css/getOtpCss/getotp.css">
+	<link rel="stylesheet" type="text/css" href="../css/input框.css">
+	<link rel="stylesheet" type="text/css" href="../css/button.css">
+	<script type="text/javascript" src="../js/jquery-3.2.1.min.js"></script>
+	<title></title>
+
+	<style>
+	</style>
+
+</head>
+
+
+<body STYLE="background-repeat: no-repeat" background="../img/getOtp.jpg">
+
+<div class="content">
+	<h3>获取信息</h3>
+	<div>
+		<div class="fancy-label">
+			<input type="text"  name="telphone" id = "telphone" required>
+			<label for="telphone">手机号</label>
+
+		</div>
+	</div>
+	<div>
+		<ul class="button-group">
+		<button class="green button" id="getotp" type="submit">
+			获取opt短信
+		</button>
+		</ul>
+	</div>
+
+</div>
+
+
+</body>
+
+
+<script>
+	 // 页面渲染成功才可以操作
+    jQuery(document).ready(function(){
+
+        //绑定otp的click事件用于像后端发送获取手机验证码请求
+        $("#getotp").on("click",function(){
+            var telphone = $("#telphone").val();
+            
+            if(telphone == null || telphone == ""){
+                alert("手机号不能为空");
+                 return false;
+            }
+            $.ajax({
+                type:"POST",
+                contentType:"application/x-www-form-urlencoded",
+                url:"http://localhost:8080/user/getotp",
+                data:{
+                    "telphone":$("#telphone").val(),
+                },
+                xhrFields:{withCredentials:true},
+                success:function(data){
+                    if(data.status == "success"){
+                        alert("otp已经发送到了手机，请注意查收");
+                        window.location.href="registerPro.html";
+                    } else {
+                        alert("otp发送失败，原因为" + data.data.errMsg);
+                    }
+                },
+                error:function(data){
+                    alert("otp发送失败，原因为," + data.responseText);
+                }
+            });
+            return false;
+        });
+    });
+</script>
+
+</html>

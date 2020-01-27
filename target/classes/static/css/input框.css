@@ -1,0 +1,34 @@
+.fancy-label {
+    position: relative;
+    margin-bottom: 20px;
+}
+.fancy-label label {
+position: absolute;
+top: 14px;
+left: 7px;
+padding: 0 5px;
+-webkit-transition: top .5s, font-size .3s;
+transition: top .5s, font-size .3s;
+}
+.fancy-label input {
+height: 45px;
+padding: 0 12px;
+}
+.fancy-label input:hover + label, .fancy-label input:focus + label, .fancy-label input:valid + label {
+top: -9px;
+font-size: 12px;
+}
+label {
+color: #000;
+background: #fff;
+}
+input {
+color: #000;
+border: 2px solid #289afa;
+background: #fff;
+width: 240px;
+outline: 0;
+}
+body > div {
+padding: 1rem 0 0 1rem;
+}

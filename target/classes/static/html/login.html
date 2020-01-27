@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="Access-Control-Allow-Origin" content="*" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<link rel="stylesheet" type="text/css" href="../css/login.css">
+	<script type="text/javascript" src="../js/jquery-3.2.1.min.js"></script>
+	<title>login</title>
+</head>
+
+
+<body>
+
+<div class="dowebok">
+<!--	<h2>用户登陆</h2>-->
+
+		<div class="logo"></div>
+		<div class="fancy-label form-item">
+			<input type="text"  name="telphone" id = "telphone" required
+				   placeholder="手机号">
+		</div>
+
+
+		<div class="fancy-label form-item">
+            <input type="password"  name="password" id = "password" required
+				   autocomplete="off" placeholder="登录密码">
+        </div>
+
+
+
+		<div class="button-group form-item">
+		<button class="submit" id="login" type="submit">
+			登陆
+		</button>
+		</div>
+		<div class="reg-bar">
+        	<a class="reg" id="register" >
+            立即注册
+        	</a>
+			<a class="tourist" id="tourist" >
+					游客浏览
+			</a>
+		</div>
+
+
+</div>
+
+
+</body>
+
+
+<script>
+
+	 // 页面渲染成功才可以操作
+
+    $(document).ready(function() {
+        $("#register").on("click", function() {
+            window.location.href="getotp.html";
+        });
+		$("#tourist").on("click", function() {
+			window.location.href="listitemPro.html";
+		});
+        $("#login").on("click", function() {
+            var telphone = $("#telphone").val();
+            var password = $("#password").val();
+            if (telphone == null || telphone == "") {
+                alert("手机号不能为空");
+                return false;
+            }
+            if (password == null || password == "") {
+                alert("密码不能为空");
+                return false;
+            }
+            $.ajax({
+                type: "POST",
+                contentType: "application/x-www-form-urlencoded",
+                url: "http://localhost:8080/user/login",
+                data: {
+                    "telphone": telphone,
+                    "password": password
+                },
+                xhrFields:{
+                    withCredentials:true
+                },
+                success: function(data) {
+                    if (data.status == "success") {
+                        alert("登录成功");
+                        window.location.href="listitemPro.html";
+                    } else {
+                        alert("登录失败，原因为" + data.data.errMsg);
+                    }
+                },
+                error: function(data) {
+                    alert("登录失败，原因为" + data.responseText);
+                }
+            });
+            return false;
+        });
+    });
+</script>
+
+</html>

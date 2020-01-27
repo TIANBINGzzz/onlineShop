@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" href="../css/getItemCss/tasp.css"/>
+    <link href="../css/getItemCss/orderconfirm.css" rel="stylesheet"/>
+    <script type="text/javascript" src="../js/jquery-3.2.1.min.js"></script>
+
+
+</head>
+
+<body data-spm="1">
+<div id="page">
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+
+    <div id="content" class="grid-c">
+        <h3 class="dib">订单信息</h3>
+
+        <table cellspacing="0" cellpadding="0" class="order-table" id="J_OrderTable" summary="统一下单订单信息区域">
+            <caption style="display: none">统一下单订单信息区域</caption>
+            <tr>
+                <th class="s-title">店铺宝贝
+                    <hr/>
+                </th>
+                <th class="s-price">数量
+                    <hr/>
+                </th>
+                <th class="s-amount">库存
+                    <hr/>
+                </th>
+                <th class="s-agio">销量
+                    <hr/>
+                </th>
+                <th class="s-total">小计(元)
+                    <hr/>
+                </th>
+            </tr>
+
+            <tr class="first">
+                <td colspan="5"></td>
+            </tr>
+            <tr class="shop blue-line">
+
+                <td colspan="2" class="promo">
+                    <div>
+                        <ul class="scrolling-promo-hint J_ScrollingPromoHint">
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+            <tr class="item" data-lineid="19614514619:31175333266:35612993875" data-pointRate="0">
+                <td class="s-title">
+                    <a href="#" target="_blank" title="" class="J_MakePoint">
+                        <img class="itempic" id="imgUrl">
+                        <span class="title J_MakePoint" id="description"></span></a>
+
+<!--                    <img src="http://img03.taobaocdn.com/tps/i3/T1bnR4XEBhXXcQVo..-14-16.png"/>-->
+<!--                    </a>-->
+<!--                    <div>-->
+<!--                        <span style="color:gray;">卖家承诺72小时内发货</span>-->
+<!--                    </div>-->
+                </td>
+                <td class="s-price">
+                <span class='price '>
+                    <em class="style-normal-small-black J_ItemPrice">1</em>
+                </span>
+                </td>
+                <td class="s-amount">
+                    <div class="J_Quantity"  id="stock"></div>
+
+                </td>
+                <td class="s-agio">
+                    <div class="J_Promotion promotion" id="sales"></div>
+                </td>
+
+                <td class="s-total">
+                <span class='price '>
+                    <em class="style-normal-bold-red J_ItemTotal" id="price"></em>
+                </span>
+                </td>
+            </tr>
+            <td colspan="5">
+
+                <div class="order-go" data-spm="4">
+                    <div class="J_AddressConfirm address-confirm">
+                        <div class="kd-popup pop-back" style="margin-bottom: 40px;">
+
+                            <a href="listitemPro.html" class="back J_MakePoint" target="_top">再看看</a>
+                            <a id="createOrder" class=" btn-go" data-point-url="" tabindex="0" title="点击此按钮，提交订单。">提交订单<b
+                                    class="dpl-button"></b></a>
+                        </div>
+                    </div>
+
+
+                    <div class="msg" style="clear: both;">
+                        <p class="tips naked" style="float:right;padding-right: 0">若价格变动，请在提交订单后联系卖家改价，并查看已买到的宝贝</p>
+                    </div>
+                </div>
+            </td>
+        </table>
+    </div>
+</div>
+</body>
+<script>
+    var g_itemVO = {};
+    $(document).ready(function() {
+        // 获取商品详情
+        $.ajax({
+            type: "GET",
+            url: "http://localhost:8080/item/get",
+            data: {
+                "id": getParam("id"),
+            },
+            xhrFields:{
+                withCredentials:true
+            },
+            success: function(data) {
+                if (data.status == "success") {
+                    g_itemVO = data.data;
+                    reloadDom();
+                    setInterval(reloadDom, 1000);
+                } else {
+                    alert("获取信息失败，原因为" + data.data.errMsg);
+                }
+            },
+            error: function(data) {
+                alert("获取信息失败，原因为" + data.responseText);
+            }
+        });
+
+
+        $("#createOrder").on("click", function() {
+            $.ajax({
+                type: "POST",
+                url: "http://localhost:8080/order/createorder",
+                contentType: "application/x-www-form-urlencoded",
+                data: {
+                    "itemId": g_itemVO.id,
+                    "amount": 1,
+                },
+                xhrFields:{
+                    withCredentials:true
+                },
+                success: function(data) {
+                    if (data.status == "success") {
+                        alert("下单成功");
+                        window.location.href="listitem.html";
+                        // window.location.reload();
+                    } else {
+                        alert("下单失败，原因为" + data.data.errMsg);
+                        if (data.data.errCode == 30002) {
+                            window.location.href="login.html";
+                        }
+                    }
+                },
+                error: function(data) {
+                    alert("下单失败，原因为" + data.responseText);
+                }
+            });
+        });
+
+    });
+
+    function reloadDom() {
+        $("#title").text(g_itemVO.title);
+        $("#imgUrl").attr("src", g_itemVO.imgUrl);
+        $("#description").text(g_itemVO.description);
+        $("#price").text(g_itemVO.price);
+        $("#stock").text(g_itemVO.stock);
+        $("#sales").text(g_itemVO.sales);
+
+    }
+
+    function getParam(paramName) {
+        paramValue = "", isFound = !1;
+        if (this.location.search.indexOf("?") == 0 && this.location.search.indexOf("=") > 1) {
+            arrSource = unescape(this.location.search).substring(1, this.location.search.length).split("&"), i = 0;
+            while (i < arrSource.length && !isFound)
+                arrSource[i].indexOf("=") > 0 && arrSource[i].split("=")[0].toLowerCase() == paramName.toLowerCase() && (paramValue = arrSource[i].split("=")[1], isFound = !0), i++
+        }
+        return paramValue == "" && (paramValue = null), paramValue
+    }
+</script>
+
+</html>

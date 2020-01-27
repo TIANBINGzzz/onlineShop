@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="utf-8">
+		<link rel="stylesheet" type="text/css" href="../../css/getItemCss/getItem.css">
+		<link rel="stylesheet" type="text/css" href="../../css/bootstrap.min.css">
+			<link rel="stylesheet" type="text/css" href="../../css/input框.css">
+			<link rel="stylesheet" type="text/css" href="../../css/button.css">
+			<script type="text/javascript" src="../../js/jquery-3.2.1.min.js"></script>
+			<title></title>
+    </head>
+
+<body class="login">
+
+	<div class="content placeCenter ">
+		<h2 class="form-title">商品详情</h2>
+		<br>
+		<div class="form-group">
+			<div>
+				<h3 class="control-label" id="title"></h3>
+
+<!--				<label  />-->
+			</div>
+		</div>
+		<div class="form-group">
+			<div>
+				<img style="width:200px;height:auto;" id="imgUrl">
+			</div>
+		</div>
+		<div class="form-group">
+			<h4>商品描述</h4>
+<!--			<label class="control-label"></label>-->
+			<div>
+				<label class="control-label" id="description" />
+			</div>
+		</div>
+
+
+		<div class="form-group">
+			<label class="control-label">库存</label>
+			<div>
+				<label class="control-label" id="stock" />
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="control-label">销量</label>
+			<div>
+				<label class="control-label" id="sales" />
+			</div>
+		</div>
+		<div class="box__shadow">
+			<div id="normalPriceContainer" class="form-group">
+				<label class="control-label">价格</label>
+				<div>
+					<label class="control-label" id="price" />
+				</div>
+			</div>
+			<div class="form-actions">
+				<button class="btn blue" id="createOrder" type="submit">
+					立即购买
+				</button>
+			</div>
+		</div>
+
+	</div>
+</body>
+
+<script>
+	var g_itemVO = {};
+	$(document).ready(function() {
+		// 获取商品详情
+		$.ajax({
+			type: "GET",
+			url: "http://localhost:8080/item/get",
+			data: {
+				"id": getParam("id"),
+			},
+			xhrFields:{
+				withCredentials:true
+			},
+			success: function(data) {
+				if (data.status == "success") {
+					g_itemVO = data.data;
+					reloadDom();
+					setInterval(reloadDom, 1000);
+				} else {
+					alert("获取信息失败，原因为" + data.data.errMsg);
+				}
+			},
+			error: function(data) {
+				alert("获取信息失败，原因为" + data.responseText);
+			}
+		});
+
+
+		$("#createOrder").on("click", function() {
+			$.ajax({
+				type: "POST",
+				url: "http://localhost:8080/order/createorder",
+				contentType: "application/x-www-form-urlencoded",
+				data: {
+					"itemId": g_itemVO.id,
+					"amount": 1,
+				},
+				xhrFields:{
+					withCredentials:true
+				},
+				success: function(data) {
+					if (data.status == "success") {
+						alert("下单成功");
+						window.location.href="listitem.html";
+						// window.location.reload();
+					} else {
+						alert("下单失败，原因为" + data.data.errMsg);
+						if (data.data.errCode == 30002) {
+							window.location.href="login.html";
+						}
+					}
+				},
+				error: function(data) {
+					alert("下单失败，原因为" + data.responseText);
+				}
+			});
+		});
+
+	});
+
+	function reloadDom() {
+		$("#title").text(g_itemVO.title);
+		$("#imgUrl").attr("src", g_itemVO.imgUrl);
+		$("#description").text(g_itemVO.description);
+		$("#price").text(g_itemVO.price);
+		$("#stock").text(g_itemVO.stock);
+		$("#sales").text(g_itemVO.sales);
+
+	}
+
+	function getParam(paramName) {            
+		paramValue = "", isFound = !1;         
+		if (this.location.search.indexOf("?") == 0 && this.location.search.indexOf("=") > 1) {               
+			arrSource = unescape(this.location.search).substring(1, this.location.search.length).split("&"), i = 0;               
+			while (i < arrSource.length && !isFound) 
+				arrSource[i].indexOf("=") > 0 && arrSource[i].split("=")[0].toLowerCase() == paramName.toLowerCase() && (paramValue = arrSource[i].split("=")[1], isFound = !0), i++
+		}           
+		return paramValue == "" && (paramValue = null), paramValue      
+	}
+</script>
+
+</html>

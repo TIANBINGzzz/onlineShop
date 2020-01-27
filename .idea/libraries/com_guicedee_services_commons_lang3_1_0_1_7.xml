@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="com.guicedee.services:commons-lang3:1.0.1.7" type="repository">
+    <properties maven-id="com.guicedee.services:commons-lang3:1.0.1.7" />
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/commons-lang3-1.0.1.7.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

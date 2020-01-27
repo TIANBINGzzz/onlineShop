@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:text-align="http://www.w3.org/1999/xhtml">
+<head>
+	<meta charset="utf-8">
+	<link href='../css/ListItemCss/font-awesome/css/font-awesome.css' rel='stylesheet' type='text/css'>
+	<link href="../css/ListItemCss/css/bootstrap.min.css" rel="stylesheet">
+
+	<!-- main css -->
+	<link href="../css/ListItemCss/css/style.css" rel="stylesheet">
+	<link href="../css/ListItemCss/css/responsive.css" rel="stylesheet">
+
+	<!-- Slider -->
+	<link href="../css/ListItemCss/css/owl.carousel.css" rel="stylesheet">
+	<link href="../css/ListItemCss/css/owl.theme.css" rel="stylesheet">
+	<link href="../css/ListItemCss/css/owl.transitions.css" rel="stylesheet">
+
+<!--	<link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css">-->
+	<link rel="stylesheet" type="text/css" href="../css/setDivCenter.css.css">
+	<link rel="stylesheet" type="text/css" href="../css/input框.css">
+	<link rel="stylesheet" type="text/css" href="../css/button.css">
+	<script type="text/javascript" src="../js/jquery-3.2.1.min.js"></script>
+	<title></title>
+</head>
+
+
+<body>
+
+<div>
+	<h3>商品列表浏览</h3>
+	<div class="table-responsive">
+		<table class="table">
+			<thead>
+				<tr>
+					<th>商品名</th>
+					<th>商品图片</th>
+					<th>商品描述</th>
+					<th>商品价格</th>
+					<th>商品库存</th>
+					<th>商品销量</th>
+				</tr>
+			</thead>
+			<tbody id="container">
+				
+			</tbody>
+		</table>
+		
+	</div>
+
+</div>
+
+<div class="setCenter">
+	<button id="ReturnMainShoppingPlace" class="red button" >返回主会场</button>
+</div>
+
+</body>
+
+
+<script>
+	// 定义全局商品数组信息
+	var g_itemList = [];
+	$(document).ready(function() {
+		$("#ReturnMainShoppingPlace").on("click", function() {
+			window.location.href="listitemPro.html";
+		});
+		$.ajax({
+			type: "GET",
+			url: "http://localhost:8080/item/list",
+			xhrFields:{
+				withCredentials:true,
+			},
+			success: function(data) {
+				if (data.status == "success") {
+					g_itemList = data.data;
+					reloadDom();
+				} else {
+					alert("获取商品信息失败，原因为" + data.data.errMsg);
+				}
+			},
+			error: function(data) {
+				alert("获取商品信息失败，原因为" + data.responseText);
+			}
+		});
+	});
+
+	function reloadDom() {
+		for (var i = 0; i < g_itemList.length; i++) {
+			var itemVO =g_itemList[i];
+			var dom = 
+			"<tr data-id='"+itemVO.id+"' id='itemDetail"+itemVO.id+"'>\
+			<td>"+itemVO.title+"</td>\
+			<td><img style='width:100px;heigth:auto;' src='"+itemVO.imgUrl+"'/></td>\
+			<td>"+itemVO.description+"</td>\
+			<td>"+itemVO.price+"</td>\
+			<td>"+itemVO.stock+"</td>\
+			<td>"+itemVO.sales+"</td>\
+			</tr>";
+			$("#container").append($(dom));
+
+            //点击一行任意的位置 跳转到商品详情页
+			$("#itemDetail"+itemVO.id).on("click", function(e) {
+				window.location.href="getItem.html?id="+$(this).data("id");
+			});
+		}
+		
+	}
+</script>
+
+</html>
